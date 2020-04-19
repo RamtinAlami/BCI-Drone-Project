@@ -23,7 +23,6 @@ class data_stream:
         raise NotImplementedError
 
     def data_processor(self):
-        print("Starting the data stream thread...")
         while True:
             raise NotImplementedError
 
@@ -37,16 +36,16 @@ class data_stream:
 class dev_data_stream(data_stream):
     def __init__(self):
         super().__init__()
-        feature_file = "/home/ram/Code/BCI_project/PipeLine/EEG_hand_squeeze/patient_B_features.csv"
+        feature_file = "/home/ramtin/Code/BCI-Drone-Project/EEG_hand_squeeze/patient_B_features.csv"
         label_file = (
-            "/home/ram/Code/BCI_project/PipeLine/EEG_hand_squeeze/patient_B_classes.csv"
+            "/home/ramtin/Code/BCI-Drone-Project/EEG_hand_squeeze/patient_B_classes.csv"
         )
         input_shape = (62, 100, 1)
-        self.X, self.Y = self.fake_data_input(feature_file, label_file, input_shape)
+        self.X, self.Y = self.fake_data_input(
+            feature_file, label_file, input_shape)
         self.data_processor_runner()
 
     def fake_data_input(self, feature_file, label_file, input_shape):
-        print("Opening files for sample data...")
         X = np.transpose(np.loadtxt(feature_file, delimiter=","))
         Y = np.loadtxt(label_file, delimiter=",")
 
@@ -68,13 +67,11 @@ class dev_data_stream(data_stream):
 
         X = np.delete(X, index, 0)
         Y = np.delete(Y, index, 0)
-        print("Done with sample data")
+
         return X, Y
 
     def data_processor(self):
-        print("Starting the data stream thread...")
         while True:
             rand_indx = np.random.randint(0, self.X.shape[0])
             self.processed_queue.put(self.X[rand_indx])
-            print(str(self.Y[rand_indx][0]) + " <- real class")
             sleep(1.5)

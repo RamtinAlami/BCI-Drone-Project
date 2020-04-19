@@ -11,16 +11,18 @@ class Tello:
         def make_queueable(command_func):
             # Adds command functions to a Queue to run concurrently
             def queueable_func(self, *args, **kwargs):
-                self.command_buffer.put(lambda: command_func(self, *args, **kwargs))
+                self.command_buffer.put(
+                    lambda: command_func(self, *args, **kwargs))
 
             return queueable_func
 
-    def __init__(self, command_buffer_size=100):
+    def __init__(self, command_buffer_size=15):
         assert type(command_buffer_size) == int
         assert command_buffer_size > 0
 
         self.command_buffer = Queue(command_buffer_size)
         self.read_buffer = Queue()
+        self.current_command = "NaN"
         self.connected = self.start_connection()
         self.start_receiver()
         self.start_runner_thread()
@@ -28,6 +30,7 @@ class Tello:
     @Decorators.make_queueable
     def forward(self):
         # Moves forward
+        self.current_command = "Forward    "
         self.rc_control(0, 85, 0, 0)
         time.sleep(0.4)
         self.rc_control(0, 0, 0, 0)
@@ -36,6 +39,7 @@ class Tello:
     @Decorators.make_queueable
     def backward(self):
         # Moves back
+        self.current_command = "Back      "
         self.rc_control(0, -85, 0, 0)
         time.sleep(0.4)
         self.rc_control(0, 0, 0, 0)
@@ -44,6 +48,7 @@ class Tello:
     @Decorators.make_queueable
     def right(self):
         # Moves right
+        self.current_command = "Right     "
         self.rc_control(85, 0, 0, 0)
         time.sleep(0.4)
         self.rc_control(0, 0, 0, 0)
@@ -52,6 +57,7 @@ class Tello:
     @Decorators.make_queueable
     def left(self):
         # Moves left
+        self.current_command = "Left      "
         self.rc_control(-85, 0, 0, 0)
         time.sleep(0.4)
         self.rc_control(0, 0, 0, 0)
@@ -60,6 +66,7 @@ class Tello:
     @Decorators.make_queueable
     def takeoff(self):
         # Tello Takesoff
+        self.current_command = "Takeoff    "
         msg = "takeoff"
         self.send_command(msg)
         time.sleep(1)
@@ -67,12 +74,14 @@ class Tello:
     @Decorators.make_queueable
     def land(self):
         # Lands Tello and ends connection
+        self.current_command = "Land    "
         msg = "land"
         self.send_command(msg)
-        self.end_connection()
+        # self.end_connection()
 
     def emergency_land(self):
         # Identical to the land method, except it is not queued
+        self.current_command = "E-Land"
         msg = "land"
         self.send_command(msg)
         self.end_connection()
@@ -106,7 +115,7 @@ class Tello:
 
     def rc_control(self, lr, fb, ud, y):
         """Send RC control via four channels
-        
+
         Arguments:
             lr {Int} -- Left/Right
             fb {Int} -- Forward/Backward
@@ -123,7 +132,7 @@ class Tello:
 
     def send_command(self, msg):
         """Send command string to Tello
-        
+
         Arguments:
             msg {str} -- The message that will be sent to the Tello
         """
