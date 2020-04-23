@@ -14,6 +14,7 @@ class controller:
         self.last_brain_read = "NaN"
         self.h5_model_location = h5_model_location
         self.state = "Stand-by"
+        self.fit_output_queue = multiprocessing.Queue()
 
     def start(self, dev_mode=False):
         if dev_mode:
@@ -21,7 +22,6 @@ class controller:
         else:
             self.fit_input_queue = data_stream().processed_queue
 
-        self.fit_output_queue = multiprocessing.Queue()
         self.run_fitter()
         self.run_tello_thread()
 
@@ -42,14 +42,16 @@ class controller:
     def tello_decode_code(self, code):
         def temp_func(): self.state = "Running  "
         command_bindings = {
-            0: self.tello.forward,
-            1: self.tello.backward,
-            2: self.tello.right,
-            3: self.tello.left,
-            4: self.tello.takeoff,
-            5: self.tello.land,
-            00: temp_func}
-        command = command_bindings.get(code)
+            '0': self.tello.up,
+            '1': self.tello.down,
+            '2': self.tello.forward,
+            '3': self.tello.backward,
+            '4': self.tello.right,
+            '5': self.tello.left,
+            '6': self.tello.takeoff,
+            '7': self.tello.land,
+            '00': temp_func}
+        command = command_bindings[str(code)]
         command()
 
     def run_fitter(self):

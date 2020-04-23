@@ -25,29 +25,28 @@ class main:
             curses.noecho()
             curses.cbreak()
             curses.curs_set(0)
-            curses.curs_set(0)
             stdscr.addstr(2, 4, "BCI Brain Controller", curses.A_BOLD)
             stdscr.addstr(
-                4, 3, "[t]Take-Off   [l]Land    [e]Emergency-Stop    [s]Start-Scanning  [q]Quit")
-            stdscr.addstr(6, 3, "Command Queue: <F,U,D>")
-            stdscr.addstr(8, 3, "Mode:            Test-mode")
-            stdscr.addstr(9, 3, "Current State:   " +
+                4, 3, "[t]Take-Off   [l]Land    [e]Emergency-Stop    [s]Start  [q]Quit")
+            stdscr.addstr(6, 3, "From Tello: " +
+                          self.controller.tello.from_tello)
+            stdscr.addstr(7, 3, "Mode:            Test-mode")
+            stdscr.addstr(8, 3, "Current State:   " +
                           str(self.controller.state))
-            stdscr.addstr(10, 3, "Current Command: " +
+            stdscr.addstr(9, 3, "Current Command: " +
                           self.controller.tello.current_command)
-            stdscr.addstr(11, 3, "Last Brain Read: Forward")
+            stdscr.addstr(10, 3, "Last Brain Read: Forward")
 
-            rectangle(stdscr, 1, 2, 3, 80)
-            rectangle(stdscr, 1, 2, 5, 80)
-            rectangle(stdscr, 1, 2, 7, 80)
-            rectangle(stdscr, 1, 2, 12, 80)
+            rectangle(stdscr, 1, 2, 3, 67)
+            rectangle(stdscr, 1, 2, 5, 67)
+            rectangle(stdscr, 1, 2, 11, 67)
 
             stdscr.nodelay(True)
             c = stdscr.getch()
             if c == ord('t'):
-                self.controller.tello_decode_code(4)
+                self.controller.tello_decode_code(6)
             elif c == ord('l'):
-                self.controller.tello_decode_code(5)
+                self.controller.tello_decode_code(7)
             elif c == ord('e'):
                 self.controller.emergency_land()
             elif c == ord('s'):

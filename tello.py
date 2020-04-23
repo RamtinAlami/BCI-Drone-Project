@@ -26,6 +26,7 @@ class Tello:
         self.connected = self.start_connection()
         self.start_receiver()
         self.start_runner_thread()
+        self.from_tello = "         "
 
     @Decorators.make_queueable
     def forward(self):
@@ -64,12 +65,30 @@ class Tello:
         time.sleep(0.2)
 
     @Decorators.make_queueable
+    def up(self):
+        # Moves left
+        self.current_command = "Up      "
+        self.rc_control(0, 0, 40, 0)
+        time.sleep(0.4)
+        self.rc_control(0, 0, 0, 0)
+        time.sleep(0.2)
+
+    @Decorators.make_queueable
+    def down(self):
+        # Moves left
+        self.current_command = "Down      "
+        self.rc_control(0, 0, -40, 0)
+        time.sleep(0.4)
+        self.rc_control(0, 0, 0, 0)
+        time.sleep(0.2)
+
+    @Decorators.make_queueable
     def takeoff(self):
         # Tello Takesoff
         self.current_command = "Takeoff    "
         msg = "takeoff"
         self.send_command(msg)
-        time.sleep(1)
+        time.sleep(0.5)
 
     @Decorators.make_queueable
     def land(self):
@@ -81,10 +100,10 @@ class Tello:
 
     def emergency_land(self):
         # Identical to the land method, except it is not queued
-        self.current_command = "E-Land"
+        self.current_command = "E-Land    "
         msg = "land"
         self.send_command(msg)
-        self.end_connection()
+        # self.end_connection()
 
     def end_connection(self):
         # Ends connections by closing the socket and ending the threads
@@ -104,7 +123,7 @@ class Tello:
         while self.connected:
             data, server = self.sock.recvfrom(1518)
             dt = data.decode(encoding="utf-8")
-            print(dt)
+            self.from_tello = dt
             self.read_buffer.put(dt)
         print("end")
 
