@@ -15,6 +15,7 @@ class controller:
         self.h5_model_location = h5_model_location
         self.state = "Stand-by"
         self.fit_output_queue = multiprocessing.Queue()
+        self.last_read = ""
 
     def start(self, dev_mode=False):
         if dev_mode:
@@ -35,8 +36,13 @@ class controller:
 
     def tello_commander(self):
         # add assertion
+        brain_read = {
+            '0': "Up Signal  ",
+            '1': "Down Signal  ",
+            '00': "Starting   "}
         while True:
             code = self.fit_output_queue.get()
+            self.last_read = brain_read[str(code)]
             self.tello_decode_code(code)
 
     def tello_decode_code(self, code):
@@ -66,7 +72,7 @@ class controller:
     def fit_signal(self, fit_input_queue, fit_output_queue, h5_model_location):
         model = keras.models.load_model(h5_model_location)
         # signalling start
-        fit_output_queue.put(00)
+        fit_output_queue.put("00")
         while True:
             signal = fit_input_queue.get()
             signal = signal.reshape(tuple([1] + list(signal.shape)))

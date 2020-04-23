@@ -27,19 +27,20 @@ class main:
             curses.curs_set(0)
             stdscr.addstr(2, 4, "BCI Brain Controller", curses.A_BOLD)
             stdscr.addstr(
-                4, 3, "[t]Take-Off   [l]Land    [e]Emergency-Stop    [s]Start  [q]Quit")
-            stdscr.addstr(6, 3, "From Tello: " +
+                4, 3, "[t]Take-Off   [l]Land    [e]Emergency-Stop   [q]Quit")
+            stdscr.addstr(6, 3, "From Tello:      " +
                           self.controller.tello.from_tello)
             stdscr.addstr(7, 3, "Mode:            Test-mode")
             stdscr.addstr(8, 3, "Current State:   " +
                           str(self.controller.state))
             stdscr.addstr(9, 3, "Current Command: " +
                           self.controller.tello.current_command)
-            stdscr.addstr(10, 3, "Last Brain Read: Forward")
+            stdscr.addstr(10, 3, "Last Brain Read: " +
+                          self.controller.last_read)
 
-            rectangle(stdscr, 1, 2, 3, 67)
-            rectangle(stdscr, 1, 2, 5, 67)
-            rectangle(stdscr, 1, 2, 11, 67)
+            rectangle(stdscr, 1, 2, 3, 56)
+            rectangle(stdscr, 1, 2, 5, 56)
+            rectangle(stdscr, 1, 2, 11, 56)
 
             stdscr.nodelay(True)
             c = stdscr.getch()
